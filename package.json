@@ -1,0 +1,9 @@
+{
+  "name": "el-sonlatino-colombia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Radio en línea El Sonlatino Colombia: emisoras por ciudad, administradas solo por el dueño.",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
