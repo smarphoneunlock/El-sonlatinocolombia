@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
+<title>El Sonlatino Colombia</title>
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sonlatino">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Estilo tomado del logo: negro puro, amarillo brillante, bandera tricolor y letras blancas. */
+:root{
+  color-scheme:dark;
+  --bg:#000; --surface:#120f0a; --surface-2:#1c1710; --ink:#fff7e0; --muted:#a89c80; --line:#2d2619;
+  --amarillo:#ffd21f; --azul:#1f47c2; --azul-claro:#6f93ff; --rojo:#ee1c2e; --rojo-claro:#ff7a86;
+  --on-amarillo:#161000;
+  --font-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --font-body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"DM Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--font-body);min-height:100vh;
+  padding-block:max(12px,env(safe-area-inset-top,0px)) max(48px,env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+.wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.wrap>*{min-width:0}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--amarillo);outline-offset:3px;border-radius:8px}
+.stripe{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--amarillo) 0 50%,var(--azul) 50% 75%,var(--rojo) 75%)}
+
+.top{position:relative;display:block}
+.logo{display:block;width:100%;max-width:420px;margin:0 auto;height:auto;aspect-ratio:1672/941}
+.top .icon-btn{position:absolute;top:0;right:0}
+.icon-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center}
+.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.admin-bar{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;background:var(--surface-2);border:1px solid var(--amarillo);border-radius:16px;padding:10px 14px;font-size:14px}
+.admin-bar b{font:500 11px var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--amarillo)}
+
+/* Reproductor */
+.player{background:var(--surface);border:1px solid var(--line);border-radius:26px;padding:18px;display:flex;flex-direction:column;gap:18px}
+.p-head{display:flex;gap:14px;align-items:center;min-width:0}
+.thumb{flex:none;width:84px;height:84px;border-radius:18px;background:#000;border:1px solid var(--line);display:grid;place-items:center;overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:contain;display:block}
+.thumb.ini{font:800 30px var(--font-display);color:var(--amarillo);background:linear-gradient(135deg,#241d0c,#000)}
+.p-info{min-width:0;flex:1;display:flex;flex-direction:column;gap:2px}
+.state{display:inline-flex;align-items:center;gap:8px;font:500 11px var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--muted)}
+.s-live .dot{background:var(--rojo);animation:pulse 1.3s ease-in-out infinite}.s-live .state{color:var(--amarillo)}
+.s-loading .dot{background:var(--amarillo);animation:pulse .7s ease-in-out infinite}
+.s-error .dot{background:var(--rojo)}.s-error .state{color:var(--rojo-claro)}
+@keyframes pulse{50%{opacity:.25}}
+.p-info h2{margin:0;font:800 clamp(22px,6vw,28px)/1.05 var(--font-display);letter-spacing:-.02em;overflow-wrap:anywhere}
+.p-info p{margin:0;color:var(--muted);font-size:14px;overflow-wrap:anywhere}
+.ctrls{display:flex;align-items:center;gap:14px}
+.nav{flex:none;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:transparent;display:grid;place-items:center}
+.nav svg{width:22px;height:22px;fill:currentColor}
+.play{flex:none;width:80px;height:80px;border-radius:50%;border:0;background:var(--amarillo);color:var(--on-amarillo);display:grid;place-items:center;box-shadow:0 0 0 5px var(--surface),0 0 0 7px var(--amarillo)}
+.play:active{transform:scale(.95)}
+.play svg{width:32px;height:32px;fill:currentColor}
+.play .i-pause,.play .i-load{display:none}
+.s-live .play .i-play,.s-loading .play .i-play{display:none}
+.s-live .play .i-pause{display:block}
+.s-loading .play .i-load{display:block;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.eq{flex:1;min-width:40px;display:flex;align-items:flex-end;gap:4px;height:48px}
+.eq i{flex:1;border-radius:2px;background:var(--amarillo);height:12%}
+.eq i:nth-child(3n){background:var(--azul-claro)}.eq i:nth-child(5n){background:var(--rojo)}
+.s-live .eq i{animation:bar 1s ease-in-out infinite}
+.eq i:nth-child(2n){animation-duration:.8s}.eq i:nth-child(3n){animation-duration:1.2s}.eq i:nth-child(4n){animation-duration:.62s}
+.eq i:nth-child(5n){animation-delay:-.4s}.eq i:nth-child(7n){animation-delay:-.7s}
+@keyframes bar{0%,100%{height:14%}50%{height:96%}}
+.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.vol{display:flex;align-items:center;gap:10px;flex:1;min-width:160px}
+.vol svg{width:20px;height:20px;flex:none;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+input[type=range]{flex:1;min-width:0;height:32px;accent-color:var(--amarillo)}
+.chip{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:transparent;font-weight:500;font-size:14px}
+.chip[aria-pressed="true"]{background:var(--azul);border-color:var(--azul);color:#fff}
+.msg{margin:0;font-size:14px;color:var(--muted);min-height:1.4em}
+.msg.err{color:var(--rojo-claro)}
+
+/* Ciudades */
+.ciudades{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.city{flex:none;min-height:42px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:14px;white-space:nowrap}
+.city small{font:500 11px var(--font-mono);color:var(--muted);margin-left:6px}
+.city[aria-selected="true"]{background:var(--amarillo);border-color:var(--amarillo);color:var(--on-amarillo)}
+.city[aria-selected="true"] small{color:var(--on-amarillo);opacity:.7}
+.city.vacia{opacity:.55}
+.city.vacia[aria-selected="true"]{opacity:1}
+
+/* Lista */
+.list-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.list-head h3{margin:0;font:800 24px/1.1 var(--font-display);letter-spacing:-.015em}
+.btn{min-height:46px;padding:0 20px;border-radius:999px;border:1px solid var(--line);background:transparent;font-weight:700}
+.btn.primary{background:var(--amarillo);border-color:var(--amarillo);color:var(--on-amarillo)}
+.btn.danger{border-color:var(--rojo);color:var(--rojo-claro)}
+.link{background:none;border:0;padding:8px 4px;color:var(--muted);text-decoration:underline;font-size:13px}
+.group{margin:0;display:flex;flex-direction:column;gap:10px}
+.group+.group{margin-top:10px}
+.group h4{margin:8px 0 0;font:500 12px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--amarillo)}
+.stations{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.st{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:10px}
+.st.on{border-color:var(--amarillo);background:var(--surface-2)}
+.st .thumb{width:60px;height:60px;border-radius:14px}
+.st .thumb.ini{font-size:22px}
+.st-main{min-width:0;border:0;background:none;text-align:left;padding:4px 0;display:flex;flex-direction:column;gap:2px}
+.st-main b{font:700 17px/1.15 var(--font-display);overflow-wrap:anywhere}
+.st-main span{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.st-main .nourl{color:var(--rojo-claro)}
+.st-edit{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:transparent;display:grid;place-items:center}
+.st-edit svg{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.empty{border:1px dashed var(--line);border-radius:20px;padding:26px 18px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:12px;align-items:center}
+.empty b{font:800 18px var(--font-display);color:var(--ink)}
+
+/* Instalar app */
+.install{display:flex;align-items:center;gap:10px;justify-content:space-between;background:var(--surface-2);border:1px solid var(--azul-claro);border-radius:16px;padding:10px 10px 10px 14px;font-size:14px}
+.install span{min-width:0;flex:1}
+.install .btn{min-height:42px;padding:0 16px;flex:none}
+.install .x{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:none;color:var(--muted);font-size:20px;line-height:1}
+
+/* Buscador, secciones, favoritas */
+.search input{width:100%;min-height:50px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:16px var(--font-body)}
+.search input::placeholder{color:var(--muted)}
+.tabs{display:flex;border-bottom:1px solid var(--line)}
+.tab{flex:1;min-width:0;min-height:46px;padding:0 6px;background:none;border:0;border-bottom:3px solid transparent;font-weight:700;font-size:14px;color:var(--muted);white-space:nowrap}
+.tab small{font:500 11px var(--font-mono);margin-left:5px}
+.tab[aria-selected="true"]{color:var(--amarillo);border-bottom-color:var(--amarillo)}
+.st-actions{display:flex;gap:6px;align-items:center}
+.fav{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:transparent;display:grid;place-items:center}
+.fav svg{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fav[aria-pressed="true"] svg{fill:var(--rojo);stroke:var(--rojo)}
+.list-head .btns{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Mini reproductor fijo */
+body.has-mini{padding-bottom:calc(max(48px,env(safe-area-inset-bottom,0px)) + 84px)}
+.mini{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface-2);border-top:2px solid var(--amarillo);
+  padding:10px max(16px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.mini-in{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:8px}
+.mini-info{flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:0;background:none;text-align:left;padding:0}
+.mini .thumb{width:48px;height:48px;border-radius:12px}
+.mini .thumb.ini{font-size:18px}
+.mini-txt{min-width:0;display:flex;flex-direction:column}
+.mini-txt b{font:700 15px/1.15 var(--font-display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-txt span{font:500 11px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mini.s-live .mini-txt span{color:var(--amarillo)}
+.mini .nav{width:44px;height:44px}
+.mplay{flex:none;width:52px;height:52px;border-radius:50%;border:0;background:var(--amarillo);color:var(--on-amarillo);display:grid;place-items:center}
+.mplay svg{width:24px;height:24px;fill:currentColor}
+.mplay .i-pause,.mplay .i-load{display:none}
+.s-live .mplay .i-play,.s-loading .mplay .i-play{display:none}
+.s-live .mplay .i-pause{display:block}
+.s-loading .mplay .i-load{display:block;animation:spin 1s linear infinite}
+
+/* Diálogos */
+dialog{width:min(560px,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;border:1px solid var(--line);border-radius:24px;background:var(--surface);color:var(--ink);padding:22px}
+dialog::backdrop{background:rgba(0,0,0,.72)}
+dialog h2{margin:0 0 4px;font:800 22px var(--font-display)}
+dialog .hint{margin:0 0 14px;color:var(--muted);font-size:14px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font:500 12px var(--font-mono);letter-spacing:.08em;text-transform:uppercase}
+.field input,.field select{width:100%;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#000;color:var(--ink);font:15px var(--font-body)}
+.field input.mono{font-family:var(--font-mono);font-size:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:460px){.two{grid-template-columns:1fr}}
+.logo-edit{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.logo-edit .thumb{width:72px;height:72px}
+.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:6px}
+.actions .left{margin-right:auto}
+.tools-grid{display:flex;flex-direction:column;gap:10px}
+footer{font-size:13px;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <img class="logo" src="logo.webp" alt="El Sonlatino Colombia" width="1672" height="941">
+    <button class="icon-btn" id="openTools" aria-label="Copia de seguridad" hidden>
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </header>
+  <div class="stripe" aria-hidden="true"></div>
+
+  <div class="install" id="installBar" hidden>
+    <span>Instala la radio en tu celular para abrirla como una app.</span>
+    <button class="btn primary" id="installBtn">Instalar</button>
+    <button class="x" id="installClose" aria-label="Cerrar">×</button>
+  </div>
+
+  <div class="admin-bar" id="adminBar" hidden>
+    <b>Modo administrador</b>
+    <span>Todo lo que cambies se guarda solo y se ve en todos los dispositivos.</span>
+  </div>
+
+  <main id="player" class="player s-idle" aria-label="Reproductor">
+    <div class="p-head">
+      <div class="thumb" id="pThumb"></div>
+      <div class="p-info">
+        <span class="state"><span class="dot"></span><span id="stateText">Elige una emisora</span></span>
+        <h2 id="pName">El Sonlatino Colombia</h2>
+        <p id="pMeta"></p>
+      </div>
+    </div>
+    <div class="ctrls">
+      <button class="nav" id="prevBtn" aria-label="Emisora anterior"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+      <button class="play" id="playBtn" aria-label="Escuchar en vivo">
+        <svg class="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="i-pause" viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+        <svg class="i-load" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10h-3a7 7 0 1 1-7-7z"/></svg>
+      </button>
+      <button class="nav" id="nextBtn" aria-label="Emisora siguiente"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5l11 7-11 7z"/></svg></button>
+      <div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+    <div class="row">
+      <div class="vol">
+        <svg viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
+        <input type="range" id="vol" min="0" max="1" step="0.01" value="0.8" aria-label="Volumen">
+      </div>
+      <button class="chip" id="sleepBtn" aria-pressed="false">Apagado: no</button>
+      <button class="chip" id="favBtn" aria-pressed="false" hidden>Agregar a favoritas</button>
+      <button class="chip" id="castBtn" aria-pressed="false">Enviar a otro dispositivo</button>
+      <button class="chip" id="shareBtn">Compartir</button>
+    </div>
+    <p class="msg" id="msg" role="status" aria-live="polite"></p>
+  </main>
+
+  <div class="search"><input id="q" type="search" placeholder="Buscar emisora, ciudad o género" aria-label="Buscar emisora, ciudad o género" autocomplete="off" enterkeyhint="search"></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Secciones"></nav>
+  <nav aria-label="Filtros" id="filtersNav"><div class="ciudades" id="ciudades" role="tablist"></div></nav>
+
+  <section aria-labelledby="listTitle">
+    <div class="list-head">
+      <h3 id="listTitle">Emisoras</h3>
+      <div class="btns">
+        <button class="btn" id="clearHist" hidden>Borrar historial</button>
+        <button class="btn primary" id="addBtn" hidden>+ Agregar emisora</button>
+      </div>
+    </div>
+    <div id="stations" style="margin-top:14px"></div>
+  </section>
+
+  <div class="stripe" aria-hidden="true"></div>
+  <footer>
+    © <span id="year"></span> El Sonlatino Colombia ·
+    <button class="link" id="adminLink">Administrar</button>
+  </footer>
+</div>
+
+<!-- Inicio de sesión -->
+<dialog id="dlgLogin">
+  <form id="formLogin">
+    <h2>Administrar emisoras</h2>
+    <p class="hint">Solo el dueño de la radio puede agregar o cambiar emisoras.</p>
+    <div class="field"><label for="lPass">Contraseña</label><input id="lPass" type="password" autocomplete="current-password" required></div>
+    <p class="msg err" id="lErr" role="alert"></p>
+    <div class="actions">
+      <button type="button" class="btn" id="lCancel">Cancelar</button>
+      <button type="submit" class="btn primary">Entrar</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Formulario de emisora (solo administrador) -->
+<dialog id="dlgStation">
+  <form id="formStation" autocomplete="off">
+    <h2 id="dlgTitle">Nueva emisora</h2>
+    <p class="hint">Al guardar, la emisora queda publicada para todos.</p>
+    <div class="field"><label for="fName">Nombre</label><input id="fName" required maxlength="60" placeholder="Ej. Salsa Caribe FM"></div>
+    <div class="two">
+      <div class="field"><label for="fCity">Ciudad</label><input id="fCity" maxlength="40" list="cityList" placeholder="Ej. Barranquilla" required></div>
+      <div class="field"><label for="fRegion">Región</label><select id="fRegion"></select></div>
+    </div>
+    <datalist id="cityList"></datalist>
+    <div class="field"><label for="fGenre">Género</label><input id="fGenre" maxlength="40" placeholder="Ej. Salsa, vallenato"></div>
+    <div class="field"><label for="fUrl">URL del streaming</label><input id="fUrl" class="mono" type="url" inputmode="url" placeholder="https://servidor.com:8000/stream"></div>
+    <div class="field">
+      <label for="fLogoFile">Logo de la emisora</label>
+      <div class="logo-edit">
+        <div class="thumb" id="fThumb"></div>
+        <input id="fLogoFile" type="file" accept="image/*" style="flex:1;min-width:0">
+        <button type="button" class="btn" id="fLogoClear">Quitar</button>
+      </div>
+    </div>
+    <p class="msg err" id="fErr" role="alert"></p>
+    <div class="actions">
+      <button type="button" class="btn danger left" id="fDelete" hidden>Eliminar</button>
+      <button type="button" class="btn" id="fCancel">Cancelar</button>
+      <button type="submit" class="btn primary" id="fSave">Guardar</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Herramientas (solo administrador) -->
+<dialog id="dlgTools">
+  <h2>Copia de seguridad</h2>
+  <p class="hint">Descarga todas tus emisoras y logos en un archivo, o restaura una copia anterior. Al importar se reemplaza la lista actual.</p>
+  <div class="tools-grid">
+    <button class="btn primary" id="exportBtn">Descargar copia (.json)</button>
+    <button class="btn" id="importBtn">Importar copia</button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+    <button class="btn" id="logoutBtn">Salir del modo administrador</button>
+  </div>
+  <p class="msg" id="toolMsg" role="status" style="margin-top:12px"></p>
+  <div class="actions"><button class="btn" id="toolsClose">Cerrar</button></div>
+</dialog>
+
+<div class="mini s-idle" id="mini" role="region" aria-label="Mini reproductor" hidden>
+  <div class="mini-in">
+    <button class="mini-info" id="miniInfo" aria-label="Ir al reproductor">
+      <div class="thumb" id="mThumb"></div>
+      <span class="mini-txt"><b id="mName">El Sonlatino Colombia</b><span id="miniState">Listo para sonar</span></span>
+    </button>
+    <button class="nav" id="mPrev" aria-label="Emisora anterior"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+    <button class="mplay" id="mPlay" aria-label="Escuchar en vivo">
+      <svg class="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      <svg class="i-pause" viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+      <svg class="i-load" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10h-3a7 7 0 1 1-7-7z"/></svg>
+    </button>
+    <button class="nav" id="mNext" aria-label="Emisora siguiente"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5l11 7-11 7z"/></svg></button>
+  </div>
+</div>
+
+<audio id="audio" preload="none" x-webkit-airplay="allow"></audio>
+
+<script>
+const REGIONES = ["Caribe","Andina","Pacífico","Orinoquía","Amazonía","Insular","Nacional"];
+/* Ciudades principales de Colombia (orden aproximado por población) y su región. */
+const REGION_DE = {
+  "Bogotá":"Andina","Medellín":"Andina","Cali":"Pacífico","Barranquilla":"Caribe","Cartagena":"Caribe","Cúcuta":"Andina",
+  "Bucaramanga":"Andina","Pereira":"Andina","Santa Marta":"Caribe","Ibagué":"Andina","Villavicencio":"Orinoquía","Manizales":"Andina",
+  "Pasto":"Andina","Montería":"Caribe","Valledupar":"Caribe","Neiva":"Andina","Armenia":"Andina","Popayán":"Andina",
+  "Sincelejo":"Caribe","Tunja":"Andina","Riohacha":"Caribe","Florencia":"Amazonía","Quibdó":"Pacífico","Yopal":"Orinoquía",
+  "Leticia":"Amazonía","San Andrés":"Insular"
+};
+const CIUDADES = Object.keys(REGION_DE);
+
+const $ = id => document.getElementById(id);
+const KEY_TOKEN = "esl.token", KEY_VOL = "esl.vol", KEY_LAST = "esl.last", KEY_CITY = "esl.city", KEY_CACHE = "esl.cache";
+const store = {
+  get(k){ try{ return localStorage.getItem(k) }catch(e){ return null } },
+  set(k,v){ try{ localStorage.setItem(k,v) }catch(e){} },
+  del(k){ try{ localStorage.removeItem(k) }catch(e){} }
+};
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ---------- Estado ---------- */
+let stations = [], loaded = false, offline = false;
+let token = store.get(KEY_TOKEN), admin = false;
+let currentId = store.get(KEY_LAST), citySel = store.get(KEY_CITY) || "Todas";
+const KEY_FAV = "esl.fav", KEY_RECENT = "esl.recent";
+function readList(k){ try{ const a = JSON.parse(store.get(k) || "[]"); return Array.isArray(a) ? a.filter(x => typeof x === "string") : []; }catch(e){ return []; } }
+let favs = readList(KEY_FAV), recent = readList(KEY_RECENT);   // favoritas e historial: personales de cada dispositivo
+let view = "explorar", genreSel = "Todos", q = "", playerVisible = true;
+const VIEWS = [["explorar","Explorar"],["favoritos","Favoritos"],["generos","Géneros"],["historial","Historial"]];
+
+/* ---------- API ---------- */
+async function api(method, path, body){
+  const headers = {};
+  if (body !== undefined) headers["Content-Type"] = "application/json";
+  if (token) headers.Authorization = "Bearer " + token;
+  let r;
+  try{ r = await fetch("api" + path, { method, headers, body: body !== undefined ? JSON.stringify(body) : undefined, cache: "no-store" }); }
+  catch(e){ throw Object.assign(new Error("net"), { net: true }); }
+  let data = {}; try{ data = await r.json(); }catch(e){}
+  if (!r.ok){
+    if (r.status === 401 && token && path !== "/login"){ endSession(); }
+    throw Object.assign(new Error(data.error || "Error " + r.status), { status: r.status, msg: data.error });
+  }
+  return data;
+}
+function setAdmin(on){
+  admin = on;
+  $("adminBar").hidden = !on; $("addBtn").hidden = !on; $("openTools").hidden = !on;
+  $("adminLink").textContent = on ? "Salir" : "Administrar";
+  renderAll();
+}
+function endSession(){ token = null; store.del(KEY_TOKEN); setAdmin(false); }
+
+async function refresh(){
+  try{
+    const d = await api("GET", "/stations");
+    offline = false; stations = d.stations || []; loaded = true;
+    try{ store.set(KEY_CACHE, JSON.stringify(stations)); }catch(e){}
+  }catch(e){
+    offline = true;
+    if (!loaded){ try{ const c = JSON.parse(store.get(KEY_CACHE) || "null"); if (Array.isArray(c)){ stations = c; loaded = true; } }catch(x){} }
+  }
+  if (!stations.some(s => s.id === currentId)){
+    if (currentId && state !== "idle") stop();
+    currentId = stations[0]?.id || null;
+  }
+}
+
+/* ---------- Ayudas de datos ---------- */
+const logoOf = s => s.logo === "app" ? "logo.webp" : (s.logo || "");
+const initials = n => (n || "?").trim().split(/\s+/).slice(0,2).map(w => w[0]).join("").toUpperCase();
+function thumbHTML(s){ const l = logoOf(s); return l ? '<img src="' + esc(l) + '" alt="" loading="lazy">' : esc(initials(s.name)); }
+function setThumb(el, s){
+  const l = logoOf(s);
+  el.className = "thumb" + (l ? "" : " ini"); el.innerHTML = thumbHTML(s);
+  const img = el.querySelector("img");
+  if (img) img.onerror = () => { el.className = "thumb ini"; el.textContent = initials(s.name); };
+}
+const cityOf = s => s.city || "Sin ciudad";
+function cities(){ return [...new Set(stations.map(cityOf))].sort((a,b) => a.localeCompare(b, "es")); }
+const norm = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const genresOf = s => String(s.genre || "").split(/[,/;]+/).map(g => g.trim()).filter(Boolean);
+function allGenres(){
+  const m = new Map();
+  stations.forEach(s => genresOf(s).forEach(g => { const k = norm(g); if (!m.has(k)) m.set(k, g.charAt(0).toUpperCase() + g.slice(1)); }));
+  return [...m.entries()].sort((a, b) => a[1].localeCompare(b[1], "es"));
+}
+function matches(s){
+  if (!q.trim()) return true;
+  const hay = norm([s.name, s.city, s.genre, s.region].join(" "));
+  return norm(q).split(/\s+/).filter(Boolean).every(w => hay.includes(w));
+}
+function visible(){
+  let list;
+  if (view === "favoritos") list = favs.map(id => stations.find(s => s.id === id)).filter(Boolean);
+  else if (view === "historial") list = recent.map(id => stations.find(s => s.id === id)).filter(Boolean);
+  else if (q.trim()) list = stations;                                   // buscando: se busca en todas
+  else if (view === "generos") list = genreSel === "Todos" ? stations : stations.filter(s => genresOf(s).some(g => norm(g) === genreSel));
+  else list = citySel === "Todas" ? stations : stations.filter(s => cityOf(s) === citySel);
+  return q.trim() ? list.filter(matches) : list;
+}
+function toggleFav(id){
+  favs = favs.includes(id) ? favs.filter(x => x !== id) : [id, ...favs];
+  store.set(KEY_FAV, JSON.stringify(favs));
+  renderTabs(); renderList(); renderPlayer();
+}
+function addRecent(id){
+  if (!id) return;
+  recent = [id, ...recent.filter(x => x !== id)].slice(0, 30);
+  store.set(KEY_RECENT, JSON.stringify(recent));
+}
+
+/* ---------- Dibujo ---------- */
+function renderTabs(){
+  const nFav = favs.filter(id => stations.some(s => s.id === id)).length;
+  $("tabs").innerHTML = VIEWS.map(([k, l]) => '<button class="tab" role="tab" data-v="' + k + '" aria-selected="' + (k === view) + '">' + l +
+    (k === "favoritos" && nFav ? "<small>" + nFav + "</small>" : "") + "</button>").join("");
+}
+function renderFilters(){
+  const nav = $("filtersNav"), box = $("ciudades");
+  if (view === "explorar"){
+    const cs = cities(), vacias = CIUDADES.filter(c => !cs.includes(c));   // principales todavía sin emisoras
+    if (citySel !== "Todas" && !cs.includes(citySel) && !vacias.includes(citySel)) citySel = "Todas";
+    box.innerHTML = ["Todas", ...cs, ...vacias].map(c => {
+      const n = c === "Todas" ? stations.length : stations.filter(s => cityOf(s) === c).length;
+      return '<button class="city' + (n === 0 ? " vacia" : "") + '" role="tab" data-c="' + esc(c) + '" aria-selected="' + (c === citySel) + '">' + esc(c === "Todas" ? "Todas las ciudades" : c) + "<small>" + n + "</small></button>";
+    }).join("");
+    nav.hidden = false;
+  } else if (view === "generos"){
+    const gs = allGenres();
+    if (genreSel !== "Todos" && !gs.some(g => g[0] === genreSel)) genreSel = "Todos";
+    box.innerHTML = [["Todos", "Todos los géneros"], ...gs].map(([k, l]) => {
+      const n = k === "Todos" ? stations.length : stations.filter(s => genresOf(s).some(g => norm(g) === k)).length;
+      return '<button class="city" role="tab" data-g="' + esc(k) + '" aria-selected="' + (k === genreSel) + '">' + esc(l) + "<small>" + n + "</small></button>";
+    }).join("");
+    nav.hidden = false;
+  } else { nav.hidden = true; return; }
+  const sel = box.querySelector('[aria-selected="true"]');          // centra el botón elegido en la fila
+  if (sel){ const r = sel.getBoundingClientRect(), br = box.getBoundingClientRect(); box.scrollLeft += (r.left + r.width / 2) - (br.left + br.width / 2); }
+}
+function stationHTML(s, showCity){
+  const sub = (showCity ? [s.city, s.genre] : [s.genre, s.region]).filter(Boolean).join(" · ");
+  const isFav = favs.includes(s.id);
+  return '<li class="st' + (s.id === currentId ? " on" : "") + '">' +
+    '<div class="thumb' + (logoOf(s) ? "" : " ini") + '">' + thumbHTML(s) + "</div>" +
+    '<button class="st-main" data-play="' + esc(s.id) + '"><b>' + esc(s.name) + "</b>" + (sub ? "<span>" + esc(sub) + "</span>" : "") +
+    (s.url ? "" : '<span class="nourl">Aún sin señal</span>') + "</button>" +
+    '<div class="st-actions"><button class="fav" data-fav="' + esc(s.id) + '" aria-pressed="' + isFav + '" aria-label="' + (isFav ? "Quitar de favoritas: " : "Agregar a favoritas: ") + esc(s.name) + '"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5-9.5-10A5 5 0 0 1 12 6a5 5 0 0 1 9.5 5C20 16 12 21 12 21z"/></svg></button>' +
+    (admin ? '<button class="st-edit" data-edit="' + esc(s.id) + '" aria-label="Editar ' + esc(s.name) + '"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>' : "") + "</div></li>";
+}
+function renderList(){
+  const box = $("stations"), searching = !!q.trim();
+  let title;
+  if (searching) title = "Resultados para «" + q.trim() + "»";
+  else if (view === "favoritos") title = "Mis favoritas";
+  else if (view === "historial") title = "Escuchadas hace poco";
+  else if (view === "generos") title = genreSel === "Todos" ? "Todos los géneros" : ((allGenres().find(g => g[0] === genreSel) || [])[1] || "");
+  else title = citySel === "Todas" ? "Todas las emisoras" : citySel;
+  $("listTitle").textContent = title;
+  $("clearHist").hidden = !(view === "historial" && recent.length && !searching);
+  if (!loaded){
+    box.innerHTML = '<div class="empty"><b>No se pudieron cargar las emisoras</b><span>Revisa tu conexión e inténtalo de nuevo.</span><button class="btn primary" data-retry="1">Reintentar</button></div>';
+    return;
+  }
+  const list = visible();
+  if (!list.length){
+    let h;
+    if (searching) h = "<b>Sin resultados</b><span>No encontramos nada con «" + esc(q.trim()) + "». Prueba con otro nombre, ciudad o género.</span>";
+    else if (view === "favoritos") h = "<b>Aún no tienes favoritas</b><span>Toca el corazón de una emisora para guardarla aquí.</span>";
+    else if (view === "historial") h = "<b>Todavía no has escuchado nada</b><span>Las emisoras que escuches aparecerán aquí.</span>";
+    else h = "<b>" + (view === "explorar" && citySel !== "Todas" ? "Todavía no hay emisoras en " + esc(citySel) : "Todavía no hay emisoras aquí") + "</b><span>" + (admin ? "Agrega la primera con la dirección de su streaming." : "Vuelve pronto: estamos sumando emisoras.") + "</span>" +
+      (admin ? '<button class="btn primary" data-add="1">+ Agregar emisora</button>' : "");
+    box.innerHTML = '<div class="empty">' + h + "</div>";
+    return;
+  }
+  if (view === "explorar" && citySel === "Todas" && !searching){
+    box.innerHTML = cities().map(c => '<div class="group"><h4>' + esc(c) + '</h4><ul class="stations">' +
+      stations.filter(s => cityOf(s) === c).map(s => stationHTML(s, false)).join("") + "</ul></div>").join("");
+  } else {
+    box.innerHTML = '<ul class="stations">' + list.map(s => stationHTML(s, true)).join("") + "</ul>";
+  }
+}
+function updateMini(){
+  const show = !playerVisible && !!currentId && loaded;
+  $("mini").hidden = !show; document.body.classList.toggle("has-mini", show);
+}
+function renderPlayer(){
+  const s = stations.find(x => x.id === currentId), fb = $("favBtn");
+  if (!s){
+    $("pName").textContent = "El Sonlatino Colombia"; $("pMeta").textContent = loaded ? "Pronto habrá emisoras." : "";
+    $("mName").textContent = "El Sonlatino Colombia";
+    setThumb($("pThumb"), { name:"?", logo:"app" }); setThumb($("mThumb"), { name:"?", logo:"app" });
+    fb.hidden = true; updateMini(); return;
+  }
+  $("pName").textContent = s.name; $("mName").textContent = s.name;
+  $("pMeta").textContent = [s.city, s.region].filter(Boolean).join(" · ");
+  setThumb($("pThumb"), s); setThumb($("mThumb"), s);
+  const f = favs.includes(s.id); fb.hidden = false; fb.setAttribute("aria-pressed", String(f)); fb.textContent = f ? "En favoritas" : "Agregar a favoritas";
+  if ("mediaSession" in navigator){
+    const art = s.logo === "app" ? "icon-512.png" : logoOf(s);
+    navigator.mediaSession.metadata = new MediaMetadata({ title: s.name, artist: "El Sonlatino Colombia", album: s.city || "En vivo",
+      artwork: art ? [{ src: new URL(art, location.href).href, sizes: "512x512" }] : [] });
+  }
+  updateMini();
+}
+function renderAll(){ renderTabs(); renderFilters(); renderList(); renderPlayer(); }
+
+/* ---------- Audio ---------- */
+const audio = $("audio"), player = $("player");
+let state = "idle", retry = 0, retryTimer = null, sleepTimer = null, sleepIdx = 0;
+function setState(s, text){
+  state = s; player.className = "player s-" + s;
+  const label = text || ({ idle:"Listo para sonar", loading:"Conectando", live:"En vivo", error:"Sin señal" })[s];
+  $("stateText").textContent = label; $("miniState").textContent = label; $("mini").className = "mini s-" + s;
+  const al = s === "live" || s === "loading" ? "Pausar" : "Escuchar en vivo";
+  $("playBtn").setAttribute("aria-label", al); $("mPlay").setAttribute("aria-label", al);
+  if ("mediaSession" in navigator) navigator.mediaSession.playbackState = s === "live" ? "playing" : "paused";
+}
+function say(t, isErr){ const m = $("msg"); m.textContent = t || ""; m.className = "msg" + (isErr ? " err" : ""); }
+function play(){
+  const s = stations.find(x => x.id === currentId);
+  if (!s){ say("No hay emisoras para reproducir todavía.", true); return; }
+  if (!s.url){ setState("error","Sin señal"); say(admin ? "Esta emisora no tiene URL de streaming. Toca el lápiz para agregarla." : "Esta emisora aún no está al aire.", true); return; }
+  clearTimeout(retryTimer); say(""); setState("loading");
+  audio.src = s.url + (s.url.includes("?") ? "&" : "?") + "t=" + Date.now();
+  audio.load();
+  audio.play().catch(err => { if (err && err.name === "NotAllowedError"){ setState("idle"); say("Toca de nuevo para escuchar.", true); } });
+}
+function stop(){
+  clearTimeout(retryTimer); retry = 0;
+  audio.pause(); audio.removeAttribute("src"); audio.load();
+  setState("idle"); say("");
+}
+function choose(id, autoplay){
+  currentId = id; store.set(KEY_LAST, id);
+  if (state !== "idle") stop();
+  renderList(); renderPlayer(); setState("idle");
+  if (autoplay) play();
+}
+function step(dir){
+  const list = visible(); if (!list.length) return;
+  const i = list.findIndex(s => s.id === currentId);
+  choose(list[(i + dir + list.length) % list.length].id, state !== "idle");
+}
+audio.addEventListener("playing", () => { retry = 0; setState("live"); say(""); addRecent(currentId); renderTabs(); });
+audio.addEventListener("ended", () => { if (audio.getAttribute("src")) audio.dispatchEvent(new Event("error")); });   // una señal en vivo no debería terminar: se reconecta
+audio.addEventListener("waiting", () => { if (state === "live") setState("loading","Cargando"); });
+audio.addEventListener("error", () => {
+  if (!audio.getAttribute("src")) return;
+  if (retry < 4){ retry++; setState("loading","Reconectando"); say("Se cortó la señal. Reintentando (" + retry + "/4)…"); retryTimer = setTimeout(play, 1500 * retry); }
+  else { audio.removeAttribute("src"); setState("error"); say("No se pudo conectar con esta emisora. Prueba con otra.", true); }
+});
+const toggle = () => (state === "idle" || state === "error") ? play() : stop();
+$("playBtn").addEventListener("click", toggle); $("mPlay").addEventListener("click", toggle);
+$("prevBtn").addEventListener("click", () => step(-1)); $("mPrev").addEventListener("click", () => step(-1));
+$("nextBtn").addEventListener("click", () => step(1)); $("mNext").addEventListener("click", () => step(1));
+$("miniInfo").addEventListener("click", () => $("player").scrollIntoView({ behavior: "smooth", block: "start" }));
+$("favBtn").addEventListener("click", () => { if (currentId) toggleFav(currentId); });
+if ("IntersectionObserver" in window) new IntersectionObserver(es => { playerVisible = es[0].isIntersecting; updateMini(); }).observe($("player"));
+if ("mediaSession" in navigator){
+  navigator.mediaSession.setActionHandler("play", play);
+  navigator.mediaSession.setActionHandler("pause", stop);
+  navigator.mediaSession.setActionHandler("stop", stop);
+  navigator.mediaSession.setActionHandler("previoustrack", () => step(-1));
+  navigator.mediaSession.setActionHandler("nexttrack", () => step(1));
+}
+const v0 = parseFloat(store.get(KEY_VOL)); audio.volume = isNaN(v0) ? 0.8 : v0; $("vol").value = audio.volume;
+$("vol").addEventListener("input", e => { audio.volume = +e.target.value; store.set(KEY_VOL, e.target.value); });
+const SLEEP = [0,15,30,60];
+$("sleepBtn").addEventListener("click", () => {
+  sleepIdx = (sleepIdx + 1) % SLEEP.length; const min = SLEEP[sleepIdx]; clearTimeout(sleepTimer);
+  $("sleepBtn").textContent = min ? "Apagado: " + min + " min" : "Apagado: no";
+  $("sleepBtn").setAttribute("aria-pressed", String(!!min));
+  if (min) sleepTimer = setTimeout(() => { stop(); sleepIdx = 0; $("sleepBtn").textContent = "Apagado: no"; $("sleepBtn").setAttribute("aria-pressed","false"); say("Radio apagada por el temporizador."); }, min * 60000);
+});
+$("shareBtn").addEventListener("click", async () => {
+  const s = stations.find(x => x.id === currentId);
+  const link = shareUrl();
+  const data = { title: "El Sonlatino Colombia", text: "Escucha " + (s ? s.name : "El Sonlatino Colombia") + " en vivo", url: link };
+  try{ if (navigator.share){ await navigator.share(data); return; } await navigator.clipboard.writeText(link); say("Enlace copiado."); }
+  catch(e){ say("Copia el enlace desde la barra del navegador."); }
+});
+
+/* ---------- Enviar a otro dispositivo (Chromecast, AirPlay) y enlace directo ---------- */
+function shareUrl(){ return location.origin + location.pathname + (currentId ? "?e=" + encodeURIComponent(currentId) : ""); }
+const castApi = !!(audio.remote && typeof audio.remote.prompt === "function");
+const airplayApi = typeof audio.webkitShowPlaybackTargetPicker === "function";
+function castState(on){ $("castBtn").setAttribute("aria-pressed", String(on)); $("castBtn").textContent = on ? "Sonando en otro dispositivo" : "Enviar a otro dispositivo"; }
+if (castApi){
+  audio.remote.addEventListener("connect", () => castState(true));
+  audio.remote.addEventListener("disconnect", () => castState(false));
+}
+if (airplayApi) audio.addEventListener("webkitcurrentplaybacktargetiswirelesschanged", () => castState(!!audio.webkitCurrentPlaybackTargetIsWireless));
+$("castBtn").addEventListener("click", async () => {
+  const s = stations.find(x => x.id === currentId);
+  if (!s || !s.url){ say("Elige una emisora con señal para enviarla.", true); return; }
+  if (!castApi && !airplayApi){
+    say("Este navegador no permite enviar el audio. Usa Chrome (Chromecast) o Safari (AirPlay), o toca Compartir para abrir esta emisora en el otro dispositivo.", true); return;
+  }
+  if (!audio.getAttribute("src")) play();              // el selector necesita una emisora cargada
+  try{ if (castApi) await audio.remote.prompt(); else audio.webkitShowPlaybackTargetPicker(); }
+  catch(e){
+    const n = e && e.name;
+    if (n === "NotFoundError") say("No encontramos dispositivos en tu red. Revisa que el Chromecast o el parlante estén encendidos y en el mismo wifi.", true);
+    else if (n === "NotSupportedError" || n === "InvalidStateError") say("Este dispositivo no permite enviar esta emisora.", true);
+  }
+});
+
+/* ---------- Navegación ---------- */
+$("ciudades").addEventListener("click", e => {
+  const c = e.target.closest("[data-c]"), g = e.target.closest("[data-g]");
+  if (c){ citySel = c.dataset.c; store.set(KEY_CITY, citySel); }
+  else if (g){ genreSel = g.dataset.g; }
+  else return;
+  renderFilters(); renderList();
+});
+$("tabs").addEventListener("click", e => {
+  const b = e.target.closest("[data-v]"); if (!b) return;
+  view = b.dataset.v; renderTabs(); renderFilters(); renderList();
+});
+$("q").addEventListener("input", e => { q = e.target.value; renderList(); });
+$("clearHist").addEventListener("click", () => { recent = []; store.set(KEY_RECENT, "[]"); renderList(); });
+$("stations").addEventListener("click", async e => {
+  const p = e.target.closest("[data-play]"), ed = e.target.closest("[data-edit]"), ad = e.target.closest("[data-add]"), rt = e.target.closest("[data-retry]"), fv = e.target.closest("[data-fav]");
+  if (fv) toggleFav(fv.dataset.fav);
+  else if (p) choose(p.dataset.play, true);
+  else if (ed && admin) openForm(ed.dataset.edit);
+  else if (ad && admin) openForm(null);
+  else if (rt){ await refresh(); renderAll(); }
+});
+
+$("addBtn").addEventListener("click", () => { if (admin) openForm(null); });
+
+/* ---------- Sesión de administrador ---------- */
+$("adminLink").addEventListener("click", () => {
+  if (admin){ endSession(); say("Saliste del modo administrador."); return; }
+  $("lPass").value = ""; $("lErr").textContent = ""; $("dlgLogin").showModal(); $("lPass").focus();
+});
+$("lCancel").addEventListener("click", () => $("dlgLogin").close());
+$("formLogin").addEventListener("submit", async e => {
+  e.preventDefault();
+  try{
+    const d = await api("POST", "/login", { password: $("lPass").value });
+    token = d.token; store.set(KEY_TOKEN, token); $("dlgLogin").close(); setAdmin(true); say("Modo administrador activado.");
+  }catch(err){ $("lErr").textContent = err.net ? "Sin conexión con el servidor." : (err.msg || "No se pudo entrar."); }
+});
+$("logoutBtn").addEventListener("click", () => { $("dlgTools").close(); endSession(); say("Saliste del modo administrador."); });
+
+/* ---------- Formulario ---------- */
+let editId = null, formLogo = "";
+function openForm(id){
+  editId = id; $("fErr").textContent = ""; $("fLogoFile").value = "";
+  const s = id ? stations.find(x => x.id === id) : null;
+  $("dlgTitle").textContent = s ? "Editar emisora" : "Nueva emisora";
+  $("fName").value = s?.name || ""; $("fCity").value = s?.city || (citySel !== "Todas" && citySel !== "Sin ciudad" ? citySel : "");
+  $("fGenre").value = s?.genre || ""; $("fUrl").value = s?.url || "";
+  $("fRegion").innerHTML = '<option value="">Sin región</option>' + REGIONES.map(r => '<option value="' + esc(r) + '">' + esc(r) + "</option>").join("");
+  $("fRegion").value = s?.region || ""; autoRegion();
+  $("cityList").innerHTML = [...new Set([...CIUDADES, ...cities()])].map(c => '<option value="' + esc(c) + '">').join("");
+  formLogo = s?.logo || ""; refreshFormThumb();
+  $("fDelete").hidden = !s; $("fSave").disabled = false;
+  $("dlgStation").showModal(); $("fName").focus();
+}
+function refreshFormThumb(){ setThumb($("fThumb"), { name: $("fName").value || "?", logo: formLogo }); }
+$("fName").addEventListener("input", () => { if (!formLogo) refreshFormThumb(); });
+function autoRegion(){ if ($("fRegion").value) return; const r = REGION_DE[$("fCity").value.trim()]; if (r) $("fRegion").value = r; }
+$("fCity").addEventListener("input", autoRegion);
+$("fLogoClear").addEventListener("click", () => { formLogo = ""; $("fLogoFile").value = ""; refreshFormThumb(); });
+$("fLogoFile").addEventListener("change", e => {
+  const f = e.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const max = 320, k = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      formLogo = c.toDataURL("image/webp", 0.85); refreshFormThumb();
+    };
+    img.onerror = () => { $("fErr").textContent = "No se pudo leer esa imagen."; };
+    img.src = rd.result;
+  };
+  rd.readAsDataURL(f);
+});
+$("fCancel").addEventListener("click", () => $("dlgStation").close());
+$("formStation").addEventListener("submit", async e => {
+  e.preventDefault();
+  const body = { name: $("fName").value.trim(), city: $("fCity").value.trim(), region: $("fRegion").value, genre: $("fGenre").value.trim(), url: $("fUrl").value.trim(), logo: formLogo };
+  $("fErr").textContent = ""; $("fSave").disabled = true;
+  try{
+    const wasPlaying = editId && editId === currentId && state !== "idle";
+    if (editId){
+      const d = await api("PUT", "/stations/" + encodeURIComponent(editId), body);
+      stations = stations.map(s => s.id === editId ? d.station : s);
+      if (wasPlaying) stop();
+    } else {
+      const d = await api("POST", "/stations", body);
+      stations.push(d.station); currentId = d.station.id; store.set(KEY_LAST, currentId);
+    }
+    store.set(KEY_CACHE, JSON.stringify(stations));
+    citySel = body.city || "Todas"; store.set(KEY_CITY, citySel); view = "explorar"; q = ""; $("q").value = "";
+    $("dlgStation").close(); renderAll(); say("Guardado en el servidor. Ya lo ven todos.");
+  }catch(err){
+    $("fSave").disabled = false;
+    $("fErr").textContent = err.net ? "Sin conexión con el servidor. No se guardó." : (err.msg || "No se pudo guardar.");
+  }
+});
+$("fDelete").addEventListener("click", async () => {
+  const b = $("fDelete");
+  if (b.dataset.arm !== "1"){ b.dataset.arm = "1"; b.textContent = "¿Seguro? Toca otra vez"; return; }
+  try{
+    await api("DELETE", "/stations/" + encodeURIComponent(editId));
+    if (editId === currentId) stop();
+    stations = stations.filter(s => s.id !== editId);
+    if (!stations.some(s => s.id === currentId)) currentId = stations[0]?.id || null;
+    store.set(KEY_CACHE, JSON.stringify(stations));
+    $("dlgStation").close(); renderAll(); say("Emisora eliminada.");
+  }catch(err){ $("fErr").textContent = err.msg || "No se pudo eliminar."; }
+});
+$("dlgStation").addEventListener("close", () => { $("fDelete").dataset.arm = ""; $("fDelete").textContent = "Eliminar"; });
+
+/* ---------- Copia de seguridad ---------- */
+const toolMsg = t => { $("toolMsg").textContent = t; };
+$("openTools").addEventListener("click", () => { toolMsg(""); $("dlgTools").showModal(); });
+$("toolsClose").addEventListener("click", () => $("dlgTools").close());
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify({ app:"el-sonlatino-colombia", version:3, stations }, null, 2)], { type:"application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "el-sonlatino-emisoras.json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  toolMsg("Copia descargada.");
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = async () => {
+    try{
+      const d = JSON.parse(rd.result);
+      const r = await api("POST", "/import", Array.isArray(d) ? { stations: d } : { stations: d.stations });
+      stop(); stations = r.stations; currentId = stations[0]?.id || null; citySel = "Todas";
+      store.set(KEY_CACHE, JSON.stringify(stations)); renderAll(); toolMsg("Se importaron " + stations.length + " emisoras.");
+    }catch(err){ toolMsg(err.msg || "Ese archivo no es una copia válida."); }
+    e.target.value = "";
+  };
+  rd.readAsText(f);
+});
+
+/* ---------- Instalar como app (Android) y uso sin red ---------- */
+let deferredInstall = null;
+const standalone = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone;
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault(); deferredInstall = e;
+  if (!standalone && store.get("esl.noinstall") !== "1") $("installBar").hidden = false;
+});
+$("installBtn").addEventListener("click", async () => {
+  if (!deferredInstall) return;
+  try{ deferredInstall.prompt(); await deferredInstall.userChoice; }catch(e){}
+  deferredInstall = null; $("installBar").hidden = true;
+});
+$("installClose").addEventListener("click", () => { store.set("esl.noinstall", "1"); $("installBar").hidden = true; });
+window.addEventListener("appinstalled", () => { $("installBar").hidden = true; });
+if ("serviceWorker" in navigator) window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+
+/* ---------- Arranque y actualización automática ---------- */
+$("year").textContent = new Date().getFullYear();
+setState("idle");
+(async () => {
+  await refresh();
+  const wanted = new URLSearchParams(location.search).get("e");   // enlace directo a una emisora (?e=ID)
+  if (wanted && stations.some(s => s.id === wanted)){ currentId = wanted; store.set(KEY_LAST, wanted); say("Toca play para escuchar esta emisora."); }
+  renderAll();
+  if (token){ try{ await api("GET", "/me"); setAdmin(true); }catch(e){ if (!e.net && e.status === 401) endSession(); else if (e.net) { /* sin red: se mantiene como visitante */ } } }
+})();
+async function tick(){
+  if (document.hidden || $("dlgStation").open || $("dlgTools").open || $("dlgLogin").open) return;
+  const before = JSON.stringify(stations);
+  await refresh();
+  if (JSON.stringify(stations) !== before) renderAll();
+}
+setInterval(tick, 60000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) tick(); });
+</script>
+</body>
+</html>
